@@ -80,22 +80,26 @@ Probabilities are calibrated — when the model says 30%, the home side wins
 ≈29% of the time (`train_v8_calibration.py`), so the percentages mean what
 they say.
 
-## Benchmark vs Polymarket
+## Benchmark vs Polymarket (and other models)
 
-| Match | Model (W/D/L) | Polymarket | Result |
-|---|---|---|---|
-| Brazil – Morocco | 36 / 28 / 36 | 59 / 26 / 17 | **1–1** (xG 1.28–1.24) |
-| Netherlands – Japan | 36 / 30 / 34 | 48 / 28 / 26 | *pending* |
+Each fixture is tracked against the **Polymarket** market and against
+**[sujar.tech](https://www.instagram.com/sujar.tech/)** — a popular Instagram
+analyst running a StatsBomb + XGBoost model — for an ongoing head-to-head.
 
-A recurring pattern: the model agrees with the market on the **draw** but
-rates the **underdog** higher — it reads strength from results, where the
-market leans on reputation. Full write-up in [`POSTMORTEM.md`](POSTMORTEM.md)
-and [`CALIBRATION.md`](CALIBRATION.md).
+| Match | Our model (W/D/L) | sujar.tech | Polymarket | Result |
+|---|---|---|---|---|
+| Brazil – Morocco | 36 / 28 / 36 | 39 / 32 / 29 | 59 / 26 / 17 | **1–1** (xG 1.28–1.24) |
+| Netherlands – Japan | 36 / 30 / 34 | 53 / 29 / 18 | 48 / 28 / 26 | *pending* |
+
+On Brazil–Morocco both data models converged on an even match and beat the
+market. On Netherlands–Japan they split: ours is the contrarian, reading an
+even match while sujar.tech and the market favour the Netherlands.
 
 <p align="center">
-  <img src="assets/polymarket_brazil_morocco.png" width="48%">
-  <img src="assets/polymarket_netherlands_japan.png" width="48%">
+  <img src="assets/prediction_netherlands_japan.png" width="80%">
 </p>
+
+Full write-up in [`POSTMORTEM.md`](POSTMORTEM.md) and [`CALIBRATION.md`](CALIBRATION.md).
 
 ## Files
 

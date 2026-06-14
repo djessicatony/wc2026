@@ -1,6 +1,8 @@
 # Predictions log (locked before kickoff)
 
 Model: form + Elo features. 3-way via multinomial softmax. Neutral ground.
+Tracked against Polymarket and against sujar.tech (Instagram analyst running a
+StatsBomb + XGBoost model) for an ongoing comparison.
 
 ## Brazil vs Morocco — World Cup 2026, June 14
 
@@ -17,16 +19,14 @@ market's Brazil bias. Full analysis in `POSTMORTEM.md`.
 
 Elo: Netherlands 1917, Japan 1911 (near-equal). Japan slightly better recent form.
 
-| | logreg | XGBoost | market | result |
+| | our logreg | sujar.tech | market | result |
 |---|---|---|---|---|
-| Netherlands win | 35.7% | 35.3% | 48% | (tbd) |
-| Draw | 30.2% | 28.6% | 28% | (tbd) |
-| Japan win | 34.1% | 36.1% | 26% | (tbd) |
+| Netherlands win | 35.7% | 53% | 48% | (tbd) |
+| Draw | 30.2% | 29% | 28% | (tbd) |
+| Japan win | 34.1% | 18% | 26% | (tbd) |
 
-Model read: a true 3-way coin flip, high draw chance. Same pattern as Brazil–Morocco:
-- Draw estimate matches the market again (30% vs 28%) — 3rd match running.
-- We rate the underdog (Japan 35% vs market 26%) higher — Elo sees strength the market discounts.
-- But the gap is smaller here: market gives the favorite only 48% (vs 59% for Brazil),
-  so the market itself sees this as fairly even. To be checked after the match.
+Here the two data models **split**: ours reads an even match, while sujar.tech
+(53% Netherlands) sides with the market. We are the contrarian — most bullish
+on Japan (34% vs market 26% vs sujar.tech 18%). To be checked after the match.
 
 > Reproduce: `python predict_match.py "Netherlands" "Japan"`

@@ -17,7 +17,7 @@ w = 0.27
 
 fig, ax = plt.subplots(figsize=(9, 4.5))
 ax.bar(x - w, ours, w, label="Our model (logreg + Elo)", color="#2a9d8f")
-ax.bar(x, statsbomb, w, label="StatsBomb + XGBoost (community)", color="#457b9d")
+ax.bar(x, statsbomb, w, label="sujar.tech (StatsBomb + XGBoost)", color="#457b9d")
 ax.bar(x + w, market, w, label="Polymarket", color="#e76f51")
 ax.axvspan(0.5, 1.5, color="gold", alpha=0.15)
 ax.text(1, 63, "ACTUAL: 1–1 draw", ha="center", fontweight="bold", color="#b8860b")
@@ -30,6 +30,27 @@ for i, (o, s, m) in enumerate(zip(ours, statsbomb, market)):
     ax.text(i, s + 1, f"{s}%", ha="center", fontsize=8)
     ax.text(i + w, m + 1, f"{m}%", ha="center", fontsize=8)
 fig.tight_layout(); fig.savefig("assets/prediction_vs_market.png"); plt.close(fig)
+
+# ── 1b. Netherlands vs Japan — predictions (result pending) ─────────────
+nj_outcomes = ["Netherlands", "Draw", "Japan"]
+nj_ours = [36, 30, 34]
+nj_sujar = [53, 29, 18]   # sujar.tech, StatsBomb + XGBoost
+nj_market = [48, 28, 26]
+xn = np.arange(len(nj_outcomes))
+
+fig, ax = plt.subplots(figsize=(9, 4.5))
+ax.bar(xn - w, nj_ours, w, label="Our model (logreg + Elo)", color="#2a9d8f")
+ax.bar(xn, nj_sujar, w, label="sujar.tech (StatsBomb + XGBoost)", color="#457b9d")
+ax.bar(xn + w, nj_market, w, label="Polymarket", color="#e76f51")
+ax.set_xticks(xn); ax.set_xticklabels(nj_outcomes)
+ax.set_ylabel("Probability (%)"); ax.set_ylim(0, 60)
+ax.set_title("Netherlands vs Japan — our model is the contrarian (even match), result pending")
+ax.legend(fontsize=9); ax.spines[["top", "right"]].set_visible(False)
+for i, (o, s, m) in enumerate(zip(nj_ours, nj_sujar, nj_market)):
+    ax.text(i - w, o + 1, f"{o}%", ha="center", fontsize=8)
+    ax.text(i, s + 1, f"{s}%", ha="center", fontsize=8)
+    ax.text(i + w, m + 1, f"{m}%", ha="center", fontsize=8)
+fig.tight_layout(); fig.savefig("assets/prediction_netherlands_japan.png"); plt.close(fig)
 
 # ── 2. Accuracy by version (the feature-engineering story) ──────────────
 versions = ["v1\nform", "v2\nXGBoost\n(rich, few)", "v3\n+ Elo", "v6\nXGBoost\n(+Elo)", "v7\n+ importance"]
