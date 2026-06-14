@@ -139,6 +139,11 @@ the betting market prices in style and intangibles that raw stats miss.
 | Ruffy – Chandler | Ruffy 67% | Ruffy 90% | Ruffy 81% |
 | O'Malley – Zahabi | O'Malley 61% | — | O'Malley 80% |
 
+**Specific-outcome call (for fun):** combining winner + method, the model's top
+pick for the main event is **Topuria by KO, rounds 1–2** (~33%) — both fighters
+finish ~70% of their wins, so a knockout beats a decision. Low confidence by
+design (10+ possible outcomes); see `mma/finger_in_air.py`.
+
 Same pattern as football: the model is **less confident in favourites** than the
 market. Calibration and robustness checks carry over:
 

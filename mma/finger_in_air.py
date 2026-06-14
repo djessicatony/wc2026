@@ -67,16 +67,20 @@ def call(f1, f2, weight, rounds):
         "sub_t": (a["subw"]/max(a["wins"],1)+b["subw"]/max(b["wins"],1))/2, "strv": a["sig"]+b["sig"],
         "weight": ORDER[weight], "elo_gap": abs(a["elo"]-b["elo"]), "rounds": rounds}])[MF]
     dist = dict(zip(mmodel.classes_, mmodel.predict_proba(mr)[0]))
+    # aggregate round buckets -> method level (so KO isn't fragmented vs one Decision bucket)
+    by_method = {"KO": dist.get("KO R1-2", 0) + dist.get("KO R3+", 0),
+                 "Sub": dist.get("Sub R1-2", 0) + dist.get("Sub R3+", 0), "Decision": dist.get("Decision", 0)}
     print(f"\n{f1} vs {f2}")
     print(f"  winner: {f1} {p1:.0%} / {f2} {1-p1:.0%}")
-    print(f"  how it ends: " + "  ".join(f"{k} {v:.0%}" for k, v in sorted(dist.items(), key=lambda t: -t[1])))
+    print(f"  by method:   " + "  ".join(f"{k} {v:.0%}" for k, v in sorted(by_method.items(), key=lambda t: -t[1])))
+    print(f"  finish vs decision:  finish {1-by_method['Decision']:.0%}  /  decision {by_method['Decision']:.0%}")
+    print(f"  by method+round: " + "  ".join(f"{k} {v:.0%}" for k, v in sorted(dist.items(), key=lambda t: -t[1])))
     # combine: attribute finish to the likely winner
     out = []
-    for k, v in dist.items():
-        if k == "Decision": out.append((f"{f1} decision", v * p1)); out.append((f"{f2} decision", v * (1 - p1)))
-        else: out.append((f"{f1} {k}", v * p1)); out.append((f"{f2} {k}", v * (1 - p1)))
+    for k, v in by_method.items():
+        out.append((f"{f1} by {k}", v * p1)); out.append((f"{f2} by {k}", v * (1 - p1)))
     out.sort(key=lambda t: -t[1])
-    print("  finger-in-the-air (top 3):")
+    print("  finger-in-the-air (winner x method, top 3):")
     for name, p in out[:3]: print(f"     {name}: {p:.0%}")
 
 
