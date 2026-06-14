@@ -104,7 +104,7 @@ Tracked against the **Polymarket** market and **[sujar.tech](https://www.instagr
 | Match | This model | sujar.tech | Polymarket | Result |
 |---|---|---|---|---|
 | Brazil – Morocco | 36 / 28 / 36 | 39 / 32 / 29 | 59 / 26 / 17 | **1–1** |
-| Netherlands – Japan | 36 / 30 / 34 | 53 / 29 / 18 | 48 / 28 / 26 | *pending* |
+| Netherlands – Japan | 36 / 30 / 34 | 53 / 29 / 18 | 48 / 28 / 26 | **2–2** |
 
 So far the model reads matches as more even than the market, which leans on the
 favourite. On Brazil–Morocco that paid off.
@@ -113,8 +113,9 @@ favourite. On Brazil–Morocco that paid off.
   <img src="assets/prediction_netherlands_japan.png" width="80%">
 </p>
 
-Netherlands vs Japan shows the same split: the market backs the Netherlands, the
-model calls it roughly even and rates Japan higher (result pending).
+Netherlands vs Japan showed the same split: the market backed the Netherlands, the
+model called it roughly even and rated Japan higher. It finished **2–2** (xG
+0.70–0.54) — two for two, the model's "even" read beat the market's favourite-lean.
 
 ---
 

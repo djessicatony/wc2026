@@ -49,8 +49,8 @@ grouped(
     [("Our model (logreg + Elo)", [36, 30, 34], TEAL),
      ("sujar.tech (StatsBomb + XGBoost)", [53, 29, 18], BLUE),
      ("Polymarket", [48, 28, 26], ORANGE)],
-    "Netherlands vs Japan — our model is the contrarian (result pending)",
-    "prediction_netherlands_japan", ymax=60)
+    "Netherlands vs Japan — our model called it even; it finished 2–2",
+    "prediction_netherlands_japan", ymax=60, actual="ACTUAL: 2–2 draw", actual_idx=1)
 
 # 2. Accuracy by version
 versions = ["v1\nform", "v2\nXGBoost\n(rich, few)", "v3\n+ Elo", "v6\nXGBoost\n(+Elo)", "v7\n+ importance"]

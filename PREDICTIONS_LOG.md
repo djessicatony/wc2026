@@ -21,9 +21,12 @@ Elo: Netherlands 1917, Japan 1911 (near-equal). Japan slightly better recent for
 
 | | our logreg | sujar.tech | market | result |
 |---|---|---|---|---|
-| Netherlands win | 35.7% | 53% | 48% | (tbd) |
-| Draw | 30.2% | 29% | 28% | (tbd) |
-| Japan win | 34.1% | 18% | 26% | (tbd) |
+| Netherlands win | 35.7% | 53% | 48% | — |
+| Draw | 30.2% | 29% | 28% | **✓ 2–2** |
+| Japan win | 34.1% | 18% | 26% | — |
+
+Result: 2–2 draw (xG 0.70–0.54, close). Second football match running where the
+model's "even" read beat the market's favourite-lean. Netherlands didn't win.
 
 Here the two data models **split**: ours reads an even match, while sujar.tech
 (53% Netherlands) sides with the market. We are the contrarian — most bullish
