@@ -107,7 +107,51 @@ Tracked against the **Polymarket** market and **[sujar.tech](https://www.instagr
 | Netherlands – Japan | 36 / 30 / 34 | 53 / 29 / 18 | 48 / 28 / 26 | *pending* |
 
 So far the model reads matches as more even than the market, which leans on the
-favourite. On Brazil–Morocco that paid off. (MMA predictor vs leo.taps — next.)
+favourite. On Brazil–Morocco that paid off.
+
+---
+
+## 🥊 MMA predictor (UFC, June 15)
+
+Same playbook applied to the UFC card — fighter Elo + skill ratings instead of
+team form. Code lives in [`mma/`](mma/), benchmarked against Polymarket and
+**[leo.taps](https://www.instagram.com/leo.taps/)** (an MMA analyst with a similar model).
+
+The honest headline: **in MMA the market is hard to beat.** Our backtest lands
+~65% vs the market's ~70% — the opposite of football. One punch ends a fight, and
+the betting market prices in style and intangibles that raw stats miss.
+
+<p align="center">
+  <img src="mma/assets/mma_predictions.png" width="80%">
+</p>
+
+| Fight | Our model | leo.taps | Polymarket |
+|---|---|---|---|
+| Topuria – Gaethje | Topuria 78% | Topuria 91% | Topuria 80% |
+| Pereira – Gane | Gane 56% | Pereira 62% | ~coin flip |
+| Ruffy – Chandler | Ruffy 67% | — | Ruffy 81% |
+| O'Malley – Zahabi | O'Malley 61% | — | O'Malley 80% |
+
+Same pattern as football: the model is **less confident in favourites** than the
+market. Calibration and robustness checks carry over:
+
+<p align="center">
+  <img src="mma/assets/mma_reliability.png" width="42%">
+  <img src="mma/assets/mma_sensitivity_topuria.png" width="55%">
+</p>
+
+The predictions are stable across Elo settings and training windows (Topuria
+78–79%, Gane 55–57%).
+
+**What this build mostly taught: debugging and skepticism.**
+- An early run predicted the underdog at 64% — a bug, not an edge: mixed
+  difference-sign conventions plus a "Red corner wins 58%" bias leaking in. Fixed
+  by computing all features one way and averaging over both corners.
+- Tried to turn an analyst's "Gane is southpaw, open stance" read into a feature —
+  but the data (and UFC.com) say **both fighters are orthodox**. The expert's
+  premise was wrong, which flips the argument. Verify the input before modelling it.
+- Finish method (KO/Sub/Decision) and round are predictable in principle but barely
+  beat guessing — the finer the question, the more it's just randomness.
 
 ## Files
 
@@ -117,6 +161,7 @@ favourite. On Brazil–Morocco that paid off. (MMA predictor vs leo.taps — nex
 | `train.py` / `train_v3_elo.py` | train + backtest |
 | `predict_match.py` | predict any fixture (logreg + XGBoost, 3-way) |
 | `make_viz.py`, `make_shap.py`, `make_sensitivity.py` | the charts above |
+| [`mma/`](mma/) | the UFC predictor (fighter Elo, skill ratings, method/round) |
 
 ## Run it
 
