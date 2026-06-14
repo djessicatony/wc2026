@@ -129,7 +129,7 @@ the betting market prices in style and intangibles that raw stats miss.
 |---|---|---|---|
 | Topuria – Gaethje | Topuria 78% | Topuria 91% | Topuria 80% |
 | Pereira – Gane | Gane 56% | Pereira 62% | ~coin flip |
-| Ruffy – Chandler | Ruffy 67% | — | Ruffy 81% |
+| Ruffy – Chandler | Ruffy 67% | Ruffy 90% | Ruffy 81% |
 | O'Malley – Zahabi | O'Malley 61% | — | O'Malley 80% |
 
 Same pattern as football: the model is **less confident in favourites** than the

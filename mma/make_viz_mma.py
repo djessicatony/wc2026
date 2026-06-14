@@ -76,8 +76,9 @@ def fit_predict(K, start_year, f1, f2):
 
 # ── 1. predictions vs market ────────────────────────────────────────────
 FIGHTS = [("Ilia Topuria", "Justin Gaethje", 78, 80, 91), ("Alex Pereira", "Ciryl Gane", 44, 51, 62),
-          ("Mauricio Ruffy", "Michael Chandler", 67, 81, None), ("Sean O'Malley", "Aiemann Zahabi", 61, 80, None)]
-labels = [f"{a.split()[-1]}\nvs {b.split()[-1]}" for a, b, *_ in FIGHTS]
+          ("Mauricio Ruffy", "Michael Chandler", 67, 81, 90), ("Sean O'Malley", "Aiemann Zahabi", 61, 80, None)]
+# each bar = P(the FAVOURITE — first name — wins); opponent shown below
+labels = [f"{a.split()[-1]}\n(vs {b.split()[-1]})" for a, b, *_ in FIGHTS]
 ours = [f[2] for f in FIGHTS]; mkt = [f[3] for f in FIGHTS]; leo = [f[4] for f in FIGHTS]
 x = np.arange(len(FIGHTS)); w = 0.27
 fig, ax = plt.subplots(figsize=(9.5, 4.8))
@@ -85,8 +86,10 @@ ax.bar(x - w, ours, w, label="Our model", color=TEAL)
 ax.bar(x, [v if v is not None else np.nan for v in leo], w, label="leo.taps", color=BLUE)
 ax.bar(x + w, mkt, w, label="Polymarket", color=ORANGE)
 ax.axhline(50, ls="--", color="grey", lw=1, alpha=0.6)
-ax.set_xticks(x); ax.set_xticklabels(labels); ax.set_ylabel("P(favourite wins) %"); ax.set_ylim(0, 100)
-ax.set_title("MMA: our model is less confident in favourites than the market", fontsize=12, fontweight="bold")
+ax.text(len(FIGHTS) - 0.5, 51.5, "coin flip", fontsize=8, color="grey", ha="right")
+ax.set_xticks(x); ax.set_xticklabels(labels)
+ax.set_ylabel("P( named fighter wins ) %"); ax.set_ylim(0, 100)
+ax.set_title("Each bar = chance the TOP-named (market favourite) fighter wins\nour model is less confident in favourites than the market", fontsize=11, fontweight="bold")
 ax.legend(fontsize=9)
 for i in range(len(FIGHTS)):
     ax.text(i - w, ours[i] + 1.5, f"{ours[i]}", ha="center", fontsize=8)
