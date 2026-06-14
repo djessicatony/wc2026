@@ -87,6 +87,17 @@ Probabilities are calibrated — when the model says 30%, the home side wins
 ≈29% of the time (`train_v8_calibration.py`), so the percentages mean what
 they say.
 
+<p align="center">
+  <img src="assets/reliability_curve.png" width="58%">
+</p>
+
+The reliability curve plots predicted probability against the actual observed
+frequency on the test set — points on the dashed diagonal mean the percentages
+are honest. Logistic regression is naturally well-calibrated, so the **Raw**
+line already tracks the diagonal and calibration barely moves it (tree models
+like XGBoost usually deviate and benefit more). This is why "36% Brazil" is a
+trustworthy 36%, and the gap to the market is a genuine disagreement.
+
 ## Benchmark vs Polymarket (and other models)
 
 Each fixture is tracked against the **Polymarket** market and against

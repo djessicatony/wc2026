@@ -68,3 +68,40 @@ sns.despine()
 fig.savefig("assets/accuracy_by_version.png"); plt.close(fig)
 
 print("saved 4 charts to assets/")
+
+# ── 3. Reliability curve (model calibration on the test set) ────────────
+from collections import defaultdict
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
+from sklearn.calibration import CalibratedClassifierCV, calibration_curve
+
+raw = pd.read_csv("data/international_results.csv", parse_dates=["date"]).dropna(subset=["home_score"]).sort_values("date")
+r = defaultdict(lambda: 1500.0); rows = []
+for _, m in raw.iterrows():
+    h, a = m.home_team, m.away_team; rh, ra = r[h], r[a]
+    rows.append({"date": m.date, "home_team": h, "away_team": a, "home_elo": rh, "away_elo": ra})
+    e = 1/(1+10**((ra-rh)/400)); s = 1.0 if m.home_score>m.away_score else (0.5 if m.home_score==m.away_score else 0.0)
+    r[h]=rh+30*(s-e); r[a]=ra+30*((1-s)-(1-e))
+elo = pd.DataFrame(rows)
+df = pd.read_csv("data/training_set.csv", parse_dates=["date"]).merge(elo, on=["date","home_team","away_team"]).dropna().sort_values("date")
+F = ["home_win_rate","home_gf","home_ga","away_win_rate","away_gf","away_ga","is_neutral","home_elo","away_elo"]
+cut = int(len(df)*0.8); tr, te = df.iloc[:cut], df.iloc[cut:]
+
+raw_model = make_pipeline(StandardScaler(), LogisticRegression(max_iter=1000)).fit(tr[F], tr["home_won"])
+cal_model = CalibratedClassifierCV(make_pipeline(StandardScaler(), LogisticRegression(max_iter=1000)), method="isotonic", cv=3).fit(tr[F], tr["home_won"])
+p_raw = raw_model.predict_proba(te[F])[:,1]
+p_cal = cal_model.predict_proba(te[F])[:,1]
+yt_raw, xp_raw = calibration_curve(te["home_won"], p_raw, n_bins=10)
+yt_cal, xp_cal = calibration_curve(te["home_won"], p_cal, n_bins=10)
+
+fig, ax = plt.subplots(figsize=(6.5, 6.5))
+ax.plot([0,1],[0,1], "--", color="grey", label="Perfect")
+ax.plot(xp_raw, yt_raw, "o-", color="#8d99ae", label="Raw", markersize=6)
+ax.plot(xp_cal, yt_cal, "o-", color="#3d5a80", label="Calibrated", markersize=6)
+ax.set_xlabel("Predicted probability"); ax.set_ylabel("Observed frequency")
+ax.set_title("Reliability curve (test set)", fontsize=13, fontweight="bold", pad=12)
+ax.set_xlim(0,1); ax.set_ylim(0,1); ax.legend(); sns.despine()
+fig.savefig("assets/reliability_curve.png"); plt.close(fig)
+print("saved assets/reliability_curve.png")
