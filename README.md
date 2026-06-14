@@ -98,6 +98,22 @@ line already tracks the diagonal and calibration barely moves it (tree models
 like XGBoost usually deviate and benefit more). This is why "36% Brazil" is a
 trustworthy 36%, and the gap to the market is a genuine disagreement.
 
+## Explainability (SHAP)
+
+A SHAP waterfall breaks a single prediction into per-feature contributions —
+how much each feature pushed the result toward one team. (Shown on the XGBoost
+variant, the black box where weights can't just be read off as in logreg.)
+
+<p align="center">
+  <img src="assets/shap_brazil_morocco.png" width="49%">
+  <img src="assets/shap_netherlands_japan.png" width="49%">
+</p>
+
+In both matches the two Elo ratings nearly cancel (the teams are close in
+strength), and the favourite is then pulled back below a coin flip by the
+opponent's defence and the neutral venue — which is why the model reads both
+as near-even contests rather than comfortable favourite wins.
+
 ## Benchmark vs Polymarket (and other models)
 
 Each fixture is tracked against the **Polymarket** market and against
