@@ -5,18 +5,15 @@
 ![XGBoost](https://img.shields.io/badge/XGBoost-3.2-189FDD)
 ![pandas](https://img.shields.io/badge/pandas-3.0-150458?logo=pandas&logoColor=white)
 
-A side project: a football model that estimates **win / draw / loss
-probabilities** for any international fixture, benchmarked live against the
-Polymarket prediction market.
+June–July 2026 is packed with sport — the World Cup and the UFC White House card —
+so I built a model to predict match outcomes and compare it against the Polymarket
+betting market and other public models.
 
-The idea was simple — build a clean results-based model and see how it stacks
-up against a $12M betting market on real World Cup matches.
+It estimates **win / draw / loss** probabilities for any international football
+fixture from each team's recent form and an Elo strength rating.
 
-> **Brazil vs Morocco:** the model called an even match (36/28/36) while the
-> market heavily favoured Brazil (59/26/17). It finished **1–1**, with
-> near-identical expected goals (1.28 vs 1.24). An independent StatsBomb +
-> XGBoost model landed in the same place (39/32/29) — two different methods,
-> same read, with the market as the outlier.
+> **Brazil vs Morocco:** the model said an even match (36/28/36); the market
+> heavily favoured Brazil (59/26/17). It finished **1–1**, expected goals 1.28–1.24.
 
 <p align="center">
   <img src="assets/prediction_vs_market.png" width="85%">
@@ -24,11 +21,7 @@ up against a $12M betting market on real World Cup matches.
 
 ---
 
-## What it does
-
-Given two national teams, it predicts the outcome from each team's **recent
-form** (win rate, goals scored/conceded), an **Elo strength rating**, and
-whether the match is on neutral ground.
+## Try it
 
 ```bash
 python predict_match.py "Netherlands" "Japan"
@@ -46,128 +39,90 @@ python predict_match.py "Netherlands" "Japan"
 flowchart TD
     A["49k international results<br/>(1872–2026)"]
     B["25k matches since 2000<br/>form + Elo + outcome"]
-    C["71% backtest accuracy<br/>(chronological split, no leakage)"]
+    C["71% backtest accuracy"]
     D["Win / Draw / Loss<br/>probabilities"]
     A -->|"build_dataset.py — clean + leakage-safe form"| B
-    B -->|"train.py / train_v3_elo.py — logreg + backtest"| C
-    C -->|"predict_match.py — train on all, predict one fixture"| D
+    B -->|"train.py — logistic regression"| C
+    C -->|"predict_match.py"| D
     style A fill:#e0fbfc,stroke:#3d5a80
     style B fill:#cce3de,stroke:#2a9d8f
     style C fill:#a8dadc,stroke:#2a9d8f
     style D fill:#ffd166,stroke:#b8860b
 ```
 
-Two rules keep the backtest honest:
-- **Form uses only matches *before* each game** (`shift(1)` + rolling window).
-- **The model is tested on *future* matches** (split by date, never shuffled).
+Two rules keep the backtest honest: form uses only matches *before* each game,
+and the model is tested on *future* matches (split by date, never shuffled).
 
-## Model development
-
-Iterations and what moved the accuracy, measured on the same held-out backtest:
-
-<p align="center">
-  <img src="assets/accuracy_by_version.png" width="80%">
-</p>
+## What moved the accuracy
 
 | Version | Change | Backtest |
 |---|---|---|
 | v1 | form only | 65.0% |
-| v2 | XGBoost + rich StatsBomb features (xG, possession), few matches | 57.3% |
-| **v3** | **+ Elo rating (opponent strength)** | **71.2%** |
+| v2 | XGBoost + StatsBomb features (xG), few matches | 57.3% |
+| **v3** | **+ Elo rating** | **71.2%** |
 | v6 | XGBoost on form + Elo | 70.7% |
 | v7 | + match importance | 71.1% |
 
-The Elo feature added +6 points; switching to XGBoost added nothing across
-three separate tests. On this problem, **features matter more than model
-choice.**
-
-## Calibration
-
-Probabilities are calibrated — when the model says 30%, the home side wins
-≈29% of the time (`train_v8_calibration.py`), so the percentages mean what
-they say.
+Adding Elo gave +6 points. Switching to XGBoost gave nothing (three tries).
+Here, the features matter more than the model.
 
 <p align="center">
-  <img src="assets/reliability_curve.png" width="58%">
+  <img src="assets/accuracy_by_version.png" width="78%">
 </p>
 
-The reliability curve plots predicted probability against the actual observed
-frequency on the test set — points on the dashed diagonal mean the percentages
-are honest. Logistic regression is naturally well-calibrated, so the **Raw**
-line already tracks the diagonal and calibration barely moves it (tree models
-like XGBoost usually deviate and benefit more). This is why "36% Brazil" is a
-trustworthy 36%, and the gap to the market is a genuine disagreement.
+## Are the probabilities trustworthy?
 
-## Explainability (SHAP)
+**Calibration** — when the model says 30%, the home side wins ≈29% of the time,
+so the percentages mean what they say.
 
-A SHAP waterfall breaks a single prediction into per-feature contributions —
-how much each feature pushed the result toward one team. (Shown on the XGBoost
-variant, the black box where weights can't just be read off as in logreg.)
+<p align="center">
+  <img src="assets/reliability_curve.png" width="50%">
+</p>
+
+**Why each prediction looks the way it does (SHAP)** — for both matches the two
+Elo ratings nearly cancel, then the opponent's defence and the neutral venue pull
+the favourite below a coin flip.
 
 <p align="center">
   <img src="assets/shap_brazil_morocco.png" width="49%">
   <img src="assets/shap_netherlands_japan.png" width="49%">
 </p>
 
-In both matches the two Elo ratings nearly cancel (the teams are close in
-strength), and the favourite is then pulled back below a coin flip by the
-opponent's defence and the neutral venue — which is why the model reads both
-as near-even contests rather than comfortable favourite wins.
-
-## Robustness (sensitivity analysis)
-
-A single prediction is only as trustworthy as it is stable. These heatmaps
-recompute the prediction across reasonable assumption choices — the form
-window (5–20 matches) and the Elo K-factor (20–40) — to see how much it moves.
+**How stable is it?** — re-running across different settings (form window, Elo
+speed), the predictions barely move: Brazil stays 32–42%, the Netherlands 34–37%.
 
 <p align="center">
   <img src="assets/sensitivity_brazil_morocco.png" width="49%">
   <img src="assets/sensitivity_netherlands_japan.png" width="49%">
 </p>
 
-Both predictions are stable: Brazil stays at 32–42% (10-pt swing) and the
-Netherlands at 34–37% (4-pt swing) across every setting. The "even match"
-read isn't an artifact of one assumption — it holds throughout.
+## Model vs Polymarket vs other models
 
-## Benchmark vs Polymarket (and other models)
+Tracked against the **Polymarket** market and **[sujar.tech](https://www.instagram.com/sujar.tech/)**
+(a popular analyst running a StatsBomb + XGBoost model).
 
-Each fixture is tracked against the **Polymarket** market and against
-**[sujar.tech](https://www.instagram.com/sujar.tech/)** — a popular Instagram
-analyst running a StatsBomb + XGBoost model — for an ongoing head-to-head.
-
-| Match | Our model (W/D/L) | sujar.tech | Polymarket | Result |
+| Match | This model | sujar.tech | Polymarket | Result |
 |---|---|---|---|---|
-| Brazil – Morocco | 36 / 28 / 36 | 39 / 32 / 29 | 59 / 26 / 17 | **1–1** (xG 1.28–1.24) |
+| Brazil – Morocco | 36 / 28 / 36 | 39 / 32 / 29 | 59 / 26 / 17 | **1–1** |
 | Netherlands – Japan | 36 / 30 / 34 | 53 / 29 / 18 | 48 / 28 / 26 | *pending* |
 
-On Brazil–Morocco both data models converged on an even match and beat the
-market. On Netherlands–Japan they split: ours is the contrarian, reading an
-even match while sujar.tech and the market favour the Netherlands.
-
-<p align="center">
-  <img src="assets/prediction_netherlands_japan.png" width="80%">
-</p>
-
-Full write-up in [`POSTMORTEM.md`](POSTMORTEM.md) and [`CALIBRATION.md`](CALIBRATION.md).
+So far the model reads matches as more even than the market, which leans on the
+favourite. On Brazil–Morocco that paid off. (MMA predictor vs leo.taps — next.)
 
 ## Files
 
 | file | role |
 |---|---|
-| `build_dataset.py` | feature engineering: raw matches → leakage-safe form features |
-| `train.py` | logistic regression + backtest by date split |
-| `train_v3_elo.py` | Elo opponent-strength feature |
-| `train_v5_3way.py` | 3-way prediction via multinomial softmax |
-| `compare_models.py`, `train_v6_xgb.py` | logistic regression vs XGBoost |
-| `train_v8_calibration.py` | probability calibration |
-| `predict_match.py` | **predict any fixture with all models** |
-| `make_viz.py` | generate the charts above |
+| `build_dataset.py` | turn raw matches into leakage-safe form features |
+| `train.py` / `train_v3_elo.py` | train + backtest |
+| `predict_match.py` | predict any fixture (logreg + XGBoost, 3-way) |
+| `make_viz.py`, `make_shap.py`, `make_sensitivity.py` | the charts above |
 
 ## Run it
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
-pip install pandas scikit-learn xgboost matplotlib requests python-dotenv
+pip install pandas scikit-learn xgboost matplotlib seaborn shap requests python-dotenv
 
 mkdir -p data
 curl -sSL https://raw.githubusercontent.com/martj42/international_results/master/results.csv \
@@ -176,8 +131,7 @@ python build_dataset.py
 python predict_match.py "Brazil" "Morocco"
 ```
 
-## Data sources
+## Data
 
 - [martj42/international_results](https://github.com/martj42/international_results) — match results
 - [StatsBomb open data](https://github.com/statsbomb/open-data) — event data (xG, possession)
-- football-data.org — team IDs
