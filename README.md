@@ -114,6 +114,21 @@ strength), and the favourite is then pulled back below a coin flip by the
 opponent's defence and the neutral venue — which is why the model reads both
 as near-even contests rather than comfortable favourite wins.
 
+## Robustness (sensitivity analysis)
+
+A single prediction is only as trustworthy as it is stable. These heatmaps
+recompute the prediction across reasonable assumption choices — the form
+window (5–20 matches) and the Elo K-factor (20–40) — to see how much it moves.
+
+<p align="center">
+  <img src="assets/sensitivity_brazil_morocco.png" width="49%">
+  <img src="assets/sensitivity_netherlands_japan.png" width="49%">
+</p>
+
+Both predictions are stable: Brazil stays at 32–42% (10-pt swing) and the
+Netherlands at 34–37% (4-pt swing) across every setting. The "even match"
+read isn't an artifact of one assumption — it holds throughout.
+
 ## Benchmark vs Polymarket (and other models)
 
 Each fixture is tracked against the **Polymarket** market and against
