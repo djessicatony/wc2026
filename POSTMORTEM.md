@@ -38,6 +38,16 @@ many predictions. And the draw (28%) was actually below our two "win" probabilit
 so the model didn't "predict a draw" — it predicted an **even contest**, and an even
 contest is what happened (the xG tie is the real vindication, not the scoreline).
 
+## Independent corroboration
+
+A separate model built with **StatsBomb event data + XGBoost (20 features)**
+predicted **Brazil 39% / draw 32% / Morocco 29%** — right next to ours
+(36/28/36) and far from the market (59/26/17). Two independent results-based
+methods (our logreg + Elo, their XGBoost + xG) converged on "even match";
+the market was the outlier. Notably their approach needed far more data
+engineering (event data + a supplementary Copa América source for missing
+matches) to reach essentially the same answer our simpler Elo model gave.
+
 ## What this confirms
 
 - Our **Elo feature** saw Morocco's strength the market underrated → data > hype here.

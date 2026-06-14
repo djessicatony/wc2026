@@ -10,22 +10,25 @@ plt.rcParams.update({"font.size": 11, "figure.dpi": 130})
 # ── 1. Prediction vs market for Brazil–Morocco ──────────────────────────
 outcomes = ["Brazil win", "Draw", "Morocco win"]
 ours = [36, 28, 36]
+statsbomb = [39, 32, 29]   # independent StatsBomb + XGBoost model (community)
 market = [59, 26, 17]
 x = np.arange(len(outcomes))
-w = 0.38
+w = 0.27
 
-fig, ax = plt.subplots(figsize=(8, 4.5))
-ax.bar(x - w / 2, ours, w, label="Our model", color="#2a9d8f")
-ax.bar(x + w / 2, market, w, label="Polymarket", color="#e76f51")
+fig, ax = plt.subplots(figsize=(9, 4.5))
+ax.bar(x - w, ours, w, label="Our model (logreg + Elo)", color="#2a9d8f")
+ax.bar(x, statsbomb, w, label="StatsBomb + XGBoost (community)", color="#457b9d")
+ax.bar(x + w, market, w, label="Polymarket", color="#e76f51")
 ax.axvspan(0.5, 1.5, color="gold", alpha=0.15)
 ax.text(1, 63, "ACTUAL: 1–1 draw", ha="center", fontweight="bold", color="#b8860b")
 ax.set_xticks(x); ax.set_xticklabels(outcomes)
 ax.set_ylabel("Probability (%)"); ax.set_ylim(0, 70)
-ax.set_title("Brazil vs Morocco — our model saw an even match, the market didn't")
-ax.legend(); ax.spines[["top", "right"]].set_visible(False)
-for i, (o, m) in enumerate(zip(ours, market)):
-    ax.text(i - w / 2, o + 1, f"{o}%", ha="center", fontsize=9)
-    ax.text(i + w / 2, m + 1, f"{m}%", ha="center", fontsize=9)
+ax.set_title("Two independent data models saw an even match — the market was the outlier")
+ax.legend(fontsize=9); ax.spines[["top", "right"]].set_visible(False)
+for i, (o, s, m) in enumerate(zip(ours, statsbomb, market)):
+    ax.text(i - w, o + 1, f"{o}%", ha="center", fontsize=8)
+    ax.text(i, s + 1, f"{s}%", ha="center", fontsize=8)
+    ax.text(i + w, m + 1, f"{m}%", ha="center", fontsize=8)
 fig.tight_layout(); fig.savefig("assets/prediction_vs_market.png"); plt.close(fig)
 
 # ── 2. Accuracy by version (the feature-engineering story) ──────────────

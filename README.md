@@ -9,10 +9,12 @@ up against a $12M betting market on real World Cup matches.
 
 > **Brazil vs Morocco:** the model called an even match (36/28/36) while the
 > market heavily favoured Brazil (59/26/17). It finished **1–1**, with
-> near-identical expected goals (1.28 vs 1.24).
+> near-identical expected goals (1.28 vs 1.24). An independent StatsBomb +
+> XGBoost model landed in the same place (39/32/29) — two different methods,
+> same read, with the market as the outlier.
 
 <p align="center">
-  <img src="assets/prediction_vs_market.png" width="80%">
+  <img src="assets/prediction_vs_market.png" width="85%">
 </p>
 
 ---
