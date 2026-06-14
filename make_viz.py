@@ -1,70 +1,70 @@
-"""Generate README visualizations into assets/."""
+"""Generate README visualizations into assets/ (seaborn-styled)."""
 
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 
-plt.rcParams.update({"font.size": 11, "figure.dpi": 130})
+sns.set_theme(style="whitegrid", context="talk", font_scale=0.85)
+plt.rcParams.update({"figure.dpi": 140, "savefig.bbox": "tight",
+                     "axes.spines.top": False, "axes.spines.right": False})
 
-# ── 1. Prediction vs market for Brazil–Morocco ──────────────────────────
-outcomes = ["Brazil win", "Draw", "Morocco win"]
-ours = [36, 28, 36]
-statsbomb = [39, 32, 29]   # independent StatsBomb + XGBoost model (community)
-market = [59, 26, 17]
-x = np.arange(len(outcomes))
-w = 0.27
+TEAL, BLUE, ORANGE = "#2a9d8f", "#3d5a80", "#ee6c4d"
 
-fig, ax = plt.subplots(figsize=(9, 4.5))
-ax.bar(x - w, ours, w, label="Our model (logreg + Elo)", color="#2a9d8f")
-ax.bar(x, statsbomb, w, label="sujar.tech (StatsBomb + XGBoost)", color="#457b9d")
-ax.bar(x + w, market, w, label="Polymarket", color="#e76f51")
-ax.axvspan(0.5, 1.5, color="gold", alpha=0.15)
-ax.text(1, 63, "ACTUAL: 1–1 draw", ha="center", fontweight="bold", color="#b8860b")
-ax.set_xticks(x); ax.set_xticklabels(outcomes)
-ax.set_ylabel("Probability (%)"); ax.set_ylim(0, 70)
-ax.set_title("Two independent data models saw an even match — the market was the outlier")
-ax.legend(fontsize=9); ax.spines[["top", "right"]].set_visible(False)
-for i, (o, s, m) in enumerate(zip(ours, statsbomb, market)):
-    ax.text(i - w, o + 1, f"{o}%", ha="center", fontsize=8)
-    ax.text(i, s + 1, f"{s}%", ha="center", fontsize=8)
-    ax.text(i + w, m + 1, f"{m}%", ha="center", fontsize=8)
-fig.tight_layout(); fig.savefig("assets/prediction_vs_market.png"); plt.close(fig)
 
-# ── 1b. Netherlands vs Japan — predictions (result pending) ─────────────
-nj_outcomes = ["Netherlands", "Draw", "Japan"]
-nj_ours = [36, 30, 34]
-nj_sujar = [53, 29, 18]   # sujar.tech, StatsBomb + XGBoost
-nj_market = [48, 28, 26]
-xn = np.arange(len(nj_outcomes))
+def grouped(outcomes, series, title, savename, ymax, actual=None, actual_idx=None):
+    """3-series grouped bars with value labels."""
+    x = np.arange(len(outcomes)); w = 0.27
+    fig, ax = plt.subplots(figsize=(9, 4.8))
+    for k, (label, vals, color) in enumerate(series):
+        bars = ax.bar(x + (k - 1) * w, vals, w, label=label, color=color,
+                      edgecolor="white", linewidth=0.6)
+        for b, v in zip(bars, vals):
+            ax.text(b.get_x() + b.get_width() / 2, v + ymax * 0.012, f"{v}%",
+                    ha="center", fontsize=10, color="#333")
+    if actual is not None:
+        ax.axvspan(actual_idx - 0.5, actual_idx + 0.5, color="#ffd166", alpha=0.18, zorder=0)
+        ax.text(actual_idx, ymax * 0.9, actual, ha="center", fontweight="bold", color="#b8860b")
+    ax.set_xticks(x); ax.set_xticklabels(outcomes)
+    ax.set_ylabel("Probability (%)"); ax.set_ylim(0, ymax)
+    ax.set_title(title, fontsize=13, fontweight="bold", pad=12)
+    ax.legend(fontsize=9, frameon=True, framealpha=0.9)
+    sns.despine()
+    fig.savefig(f"assets/{savename}.png"); plt.close(fig)
 
-fig, ax = plt.subplots(figsize=(9, 4.5))
-ax.bar(xn - w, nj_ours, w, label="Our model (logreg + Elo)", color="#2a9d8f")
-ax.bar(xn, nj_sujar, w, label="sujar.tech (StatsBomb + XGBoost)", color="#457b9d")
-ax.bar(xn + w, nj_market, w, label="Polymarket", color="#e76f51")
-ax.set_xticks(xn); ax.set_xticklabels(nj_outcomes)
-ax.set_ylabel("Probability (%)"); ax.set_ylim(0, 60)
-ax.set_title("Netherlands vs Japan — our model is the contrarian (even match), result pending")
-ax.legend(fontsize=9); ax.spines[["top", "right"]].set_visible(False)
-for i, (o, s, m) in enumerate(zip(nj_ours, nj_sujar, nj_market)):
-    ax.text(i - w, o + 1, f"{o}%", ha="center", fontsize=8)
-    ax.text(i, s + 1, f"{s}%", ha="center", fontsize=8)
-    ax.text(i + w, m + 1, f"{m}%", ha="center", fontsize=8)
-fig.tight_layout(); fig.savefig("assets/prediction_netherlands_japan.png"); plt.close(fig)
 
-# ── 2. Accuracy by version (the feature-engineering story) ──────────────
+# 1. Brazil vs Morocco
+grouped(
+    ["Brazil win", "Draw", "Morocco win"],
+    [("Our model (logreg + Elo)", [36, 28, 36], TEAL),
+     ("sujar.tech (StatsBomb + XGBoost)", [39, 32, 29], BLUE),
+     ("Polymarket", [59, 26, 17], ORANGE)],
+    "Brazil vs Morocco — two data models saw an even match; the market didn't",
+    "prediction_vs_market", ymax=70, actual="ACTUAL: 1–1 draw", actual_idx=1)
+
+# 1b. Netherlands vs Japan
+grouped(
+    ["Netherlands", "Draw", "Japan"],
+    [("Our model (logreg + Elo)", [36, 30, 34], TEAL),
+     ("sujar.tech (StatsBomb + XGBoost)", [53, 29, 18], BLUE),
+     ("Polymarket", [48, 28, 26], ORANGE)],
+    "Netherlands vs Japan — our model is the contrarian (result pending)",
+    "prediction_netherlands_japan", ymax=60)
+
+# 2. Accuracy by version
 versions = ["v1\nform", "v2\nXGBoost\n(rich, few)", "v3\n+ Elo", "v6\nXGBoost\n(+Elo)", "v7\n+ importance"]
 acc = [65.0, 57.3, 71.2, 70.7, 71.1]
-colors = ["#264653", "#a44", "#2a9d8f", "#264653", "#264653"]
-
-fig, ax = plt.subplots(figsize=(8, 4.5))
-bars = ax.bar(versions, acc, color=colors)
-ax.axhline(65, ls="--", color="grey", lw=1)
+colors = ["#3d5a80", "#bc4749", TEAL, "#3d5a80", "#3d5a80"]
+fig, ax = plt.subplots(figsize=(9, 4.8))
+bars = ax.bar(versions, acc, color=colors, edgecolor="white", linewidth=0.6)
+ax.axhline(65, ls="--", color="grey", lw=1, alpha=0.7)
 ax.set_ylabel("Backtest accuracy (%)"); ax.set_ylim(50, 75)
-ax.set_title("One feature (Elo) beat switching models — features > models")
-ax.spines[["top", "right"]].set_visible(False)
+ax.set_title("One feature (Elo) beat switching models — features > models",
+             fontsize=13, fontweight="bold", pad=12)
 for b, a in zip(bars, acc):
-    ax.text(b.get_x() + b.get_width() / 2, a + 0.4, f"{a:.1f}", ha="center", fontsize=9)
-fig.tight_layout(); fig.savefig("assets/accuracy_by_version.png"); plt.close(fig)
+    ax.text(b.get_x() + b.get_width() / 2, a + 0.4, f"{a:.1f}", ha="center", fontsize=10, color="#333")
+sns.despine()
+fig.savefig("assets/accuracy_by_version.png"); plt.close(fig)
 
-print("saved assets/prediction_vs_market.png and assets/accuracy_by_version.png")
+print("saved 4 charts to assets/")

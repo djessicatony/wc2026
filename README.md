@@ -1,5 +1,10 @@
 # ⚽ World Cup 2026 Match Predictor
 
+![Python](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-1.9-F7931E?logo=scikitlearn&logoColor=white)
+![XGBoost](https://img.shields.io/badge/XGBoost-3.2-189FDD)
+![pandas](https://img.shields.io/badge/pandas-3.0-150458?logo=pandas&logoColor=white)
+
 A side project: a football model that estimates **win / draw / loss
 probabilities** for any international fixture, benchmarked live against the
 Polymarket prediction market.
@@ -37,17 +42,19 @@ python predict_match.py "Netherlands" "Japan"
 
 ## How it works
 
-```
-49k international results (1872–2026)
-        │  build_dataset.py — clean, leakage-safe rolling form
-        ▼
-25k matches since 2000  (form features + Elo + outcome)
-        │  train.py / train_v3_elo.py — logistic regression + backtest
-        ▼
-71% accuracy on held-out matches  (chronological split, no leakage)
-        │  predict_match.py — train on all data, predict one fixture
-        ▼
-win / draw / loss probabilities
+```mermaid
+flowchart TD
+    A["49k international results<br/>(1872–2026)"]
+    B["25k matches since 2000<br/>form + Elo + outcome"]
+    C["71% backtest accuracy<br/>(chronological split, no leakage)"]
+    D["Win / Draw / Loss<br/>probabilities"]
+    A -->|"build_dataset.py — clean + leakage-safe form"| B
+    B -->|"train.py / train_v3_elo.py — logreg + backtest"| C
+    C -->|"predict_match.py — train on all, predict one fixture"| D
+    style A fill:#e0fbfc,stroke:#3d5a80
+    style B fill:#cce3de,stroke:#2a9d8f
+    style C fill:#a8dadc,stroke:#2a9d8f
+    style D fill:#ffd166,stroke:#b8860b
 ```
 
 Two rules keep the backtest honest:
