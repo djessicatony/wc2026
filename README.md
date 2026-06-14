@@ -1,16 +1,15 @@
 # ⚽ World Cup 2026 Match Predictor
 
-A football match-outcome predictor that estimates **win / draw / loss
-probabilities** for any international fixture — and benchmarks itself against
-a real-money prediction market.
+A side project: a football model that estimates **win / draw / loss
+probabilities** for any international fixture, benchmarked live against the
+Polymarket prediction market.
 
-Built from scratch as a hands-on intro to classical ML. The goal was to
-understand every line, not just call a library — so the repo also documents
-what *didn't* work and why.
+The idea was simple — build a clean results-based model and see how it stacks
+up against a $12M betting market on real World Cup matches.
 
-> **Headline:** on Brazil vs Morocco, the model read an even match (36/28/36)
-> while the market heavily favoured Brazil (59/26/17). It finished **1–1**,
-> with near-identical expected goals (1.28 vs 1.24). Data beat hype.
+> **Brazil vs Morocco:** the model called an even match (36/28/36) while the
+> market heavily favoured Brazil (59/26/17). It finished **1–1**, with
+> near-identical expected goals (1.28 vs 1.24).
 
 <p align="center">
   <img src="assets/prediction_vs_market.png" width="80%">
@@ -40,23 +39,22 @@ python predict_match.py "Netherlands" "Japan"
 49k international results (1872–2026)
         │  build_dataset.py — clean, leakage-safe rolling form
         ▼
-25k matches since 2000  (form features + Elo + answer)
+25k matches since 2000  (form features + Elo + outcome)
         │  train.py / train_v3_elo.py — logistic regression + backtest
         ▼
 71% accuracy on held-out matches  (chronological split, no leakage)
-        │  predict_match.py — train on all data, predict one match
+        │  predict_match.py — train on all data, predict one fixture
         ▼
 win / draw / loss probabilities
 ```
 
-Two anti-leakage rules drive the whole pipeline:
-- **Form is computed only from matches *before* each game** (`shift(1)` + rolling window).
+Two rules keep the backtest honest:
+- **Form uses only matches *before* each game** (`shift(1)` + rolling window).
 - **The model is tested on *future* matches** (split by date, never shuffled).
 
-## The feature-engineering story
+## Model development
 
-The most important lesson, measured rather than assumed: **a single good
-feature beat every fancier model.**
+Iterations and what moved the accuracy, measured on the same held-out backtest:
 
 <p align="center">
   <img src="assets/accuracy_by_version.png" width="80%">
@@ -65,25 +63,36 @@ feature beat every fancier model.**
 | Version | Change | Backtest |
 |---|---|---|
 | v1 | form only | 65.0% |
-| v2 | XGBoost + rich StatsBomb features (xG, possession), few matches | 57.3% — overfit |
-| **v3** | **+ Elo rating (opponent strength)** | **71.2%** ✅ |
-| v6 | XGBoost on form + Elo | 70.7% — no gain over logreg |
-| v7 | + match importance | 71.1% — no gain (symmetric feature) |
+| v2 | XGBoost + rich StatsBomb features (xG, possession), few matches | 57.3% |
+| **v3** | **+ Elo rating (opponent strength)** | **71.2%** |
+| v6 | XGBoost on form + Elo | 70.7% |
+| v7 | + match importance | 71.1% |
 
-**Takeaway:** features ≫ data volume ≫ model choice. Switching to XGBoost did
-nothing (3 separate tests); one domain feature (Elo) added +6 points.
+The Elo feature added +6 points; switching to XGBoost added nothing across
+three separate tests. On this problem, **features matter more than model
+choice.**
 
-## Calibration & validation
+## Calibration
 
-- **Probabilities are calibrated** — when the model says 30%, the home team
-  really wins ≈29% of the time (`train_v8_calibration.py`). So "36% Brazil"
-  is an honest 36%.
-- **Validated against the market** — see [`CALIBRATION.md`](CALIBRATION.md) and
-  the post-match analysis in [`POSTMORTEM.md`](POSTMORTEM.md).
+Probabilities are calibrated — when the model says 30%, the home side wins
+≈29% of the time (`train_v8_calibration.py`), so the percentages mean what
+they say.
+
+## Benchmark vs Polymarket
+
+| Match | Model (W/D/L) | Polymarket | Result |
+|---|---|---|---|
+| Brazil – Morocco | 36 / 28 / 36 | 59 / 26 / 17 | **1–1** (xG 1.28–1.24) |
+| Netherlands – Japan | 36 / 30 / 34 | 48 / 28 / 26 | *pending* |
+
+A recurring pattern: the model agrees with the market on the **draw** but
+rates the **underdog** higher — it reads strength from results, where the
+market leans on reputation. Full write-up in [`POSTMORTEM.md`](POSTMORTEM.md)
+and [`CALIBRATION.md`](CALIBRATION.md).
 
 <p align="center">
-  <img src="assets/polymarket_brazil_morocco.png" width="70%">
-  <br><em>Polymarket ($12.4M volume) had Brazil at 59% — the model disagreed, and the 1–1 result + even xG vindicated it.</em>
+  <img src="assets/polymarket_brazil_morocco.png" width="48%">
+  <img src="assets/polymarket_netherlands_japan.png" width="48%">
 </p>
 
 ## Files
@@ -91,12 +100,11 @@ nothing (3 separate tests); one domain feature (Elo) added +6 points.
 | file | role |
 |---|---|
 | `build_dataset.py` | feature engineering: raw matches → leakage-safe form features |
-| `train.py` | train logistic regression, backtest by date split |
-| `train_v3_elo.py` | add the Elo rating feature (the +6pp jump) |
+| `train.py` | logistic regression + backtest by date split |
+| `train_v3_elo.py` | Elo opponent-strength feature |
 | `train_v5_3way.py` | 3-way prediction via multinomial softmax |
 | `compare_models.py`, `train_v6_xgb.py` | logistic regression vs XGBoost |
-| `train_v7_importance.py` | match-importance feature (negative result) |
-| `train_v8_calibration.py` | probability calibration check |
+| `train_v8_calibration.py` | probability calibration |
 | `predict_match.py` | **predict any fixture with all models** |
 | `make_viz.py` | generate the charts above |
 
@@ -106,22 +114,15 @@ nothing (3 separate tests); one domain feature (Elo) added +6 points.
 python -m venv .venv && source .venv/bin/activate
 pip install pandas scikit-learn xgboost matplotlib requests python-dotenv
 
-# data is gitignored — fetch it:
 mkdir -p data
 curl -sSL https://raw.githubusercontent.com/martj42/international_results/master/results.csv \
   -o data/international_results.csv
-python build_dataset.py          # → data/training_set.csv
+python build_dataset.py
 python predict_match.py "Brazil" "Morocco"
 ```
 
 ## Data sources
 
-- [martj42/international_results](https://github.com/martj42/international_results) — match results (main dataset)
-- [StatsBomb open data](https://github.com/statsbomb/open-data) — event data for v2 (xG, possession)
+- [martj42/international_results](https://github.com/martj42/international_results) — match results
+- [StatsBomb open data](https://github.com/statsbomb/open-data) — event data (xG, possession)
 - football-data.org — team IDs
-
-## What I learned
-
-Leakage, train/test splits by date, overfitting, k-fold cross-validation,
-sample-size noise, accuracy vs calibration, binary vs multiclass (softmax),
-and the hierarchy that matters most: **good features beat clever models.**
