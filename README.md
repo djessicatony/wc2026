@@ -133,12 +133,19 @@ the betting market prices in style and intangibles that raw stats miss.
   <img src="mma/assets/mma_predictions.png" width="80%">
 </p>
 
-| Fight | Our model | leo.taps | Polymarket |
-|---|---|---|---|
-| Topuria – Gaethje | Topuria 78% | Topuria 91% | Topuria 80% |
-| Pereira – Gane | Gane 56% | Pereira 62% | ~coin flip |
-| Ruffy – Chandler | Ruffy 67% | Ruffy 90% | Ruffy 81% |
-| O'Malley – Zahabi | O'Malley 61% | — | O'Malley 80% |
+| Fight | Our model | leo.taps | Polymarket | Result |
+|---|---|---|---|---|
+| Topuria – Gaethje | Topuria 78% | Topuria 91% | Topuria 80% | **Gaethje** TKO R4 ✗ all |
+| Pereira – Gane | **Gane 56%** | Pereira 62% | ~coin flip | **Gane** TKO R2 — **only our model** ✓ |
+| Ruffy – Chandler | Ruffy 67% | Ruffy 90% | Ruffy 81% | **Ruffy** TKO R1 ✓ |
+| O'Malley – Zahabi | O'Malley 61% | — | O'Malley 80% | **O'Malley** TKO R2 ✓ |
+
+**Scoreboard: our model 3/4, Polymarket 2/4, leo.taps 1/3.** The model beat the
+market on the night — driven by the one contrarian call: it was the *only* one of
+the three to pick **Gane** over Pereira, and Gane won by 2nd-round TKO. Topuria's
+loss was a genuine upset that everyone missed (market 80%, leo.taps 91%) — in MMA
+an 80% favourite still loses 1 in 5 times. (One card is a tiny sample; the backtest
+still says the market is sharper long-run.)
 
 **Specific-outcome call (for fun):** combining winner + method, the model's top
 pick for the main event is **Topuria by KO, rounds 1–2** (~33%) — both fighters
