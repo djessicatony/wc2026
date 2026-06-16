@@ -28,6 +28,20 @@ Elo: Netherlands 1917, Japan 1911 (near-equal). Japan slightly better recent for
 Result: 2–2 draw (xG 0.70–0.54, close). Second football match running where the
 model's "even" read beat the market's favourite-lean. Netherlands didn't win.
 
+## France vs Senegal — World Cup 2026, June 17
+
+Elo: France 1988, Senegal 1815 (173-point gap). France's form clearly better.
+
+| | our logreg | market | result |
+|---|---|---|---|
+| France win | 58.8% | 67% | (tbd) |
+| Draw | 24.8% | 22% | (tbd) |
+| Senegal win | 16.4% | 13% | (tbd) |
+
+Not a contrarian call this time — the data agrees France is the favourite, just a
+bit less confident than the market (59% vs 67%). No Senegal upset shout from the
+model; the Elo gap and form favour France clearly.
+
 Here the two data models **split**: ours reads an even match, while sujar.tech
 (53% Netherlands) sides with the market. We are the contrarian — most bullish
 on Japan (34% vs market 26% vs sujar.tech 18%). To be checked after the match.

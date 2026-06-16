@@ -105,6 +105,7 @@ Tracked against the **Polymarket** market and **[sujar.tech](https://www.instagr
 |---|---|---|---|---|
 | Brazil – Morocco | 36 / 28 / 36 | 39 / 32 / 29 | 59 / 26 / 17 | **1–1** |
 | Netherlands – Japan | 36 / 30 / 34 | 53 / 29 / 18 | 48 / 28 / 26 | **2–2** |
+| France – Senegal | 59 / 25 / 16 | — | 67 / 22 / 13 | *pending* |
 
 So far the model reads matches as more even than the market, which leans on the
 favourite. On Brazil–Morocco that paid off.
