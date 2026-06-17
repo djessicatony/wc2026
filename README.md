@@ -106,6 +106,7 @@ Tracked against the **Polymarket** market and **[sujar.tech](https://www.instagr
 | Brazil – Morocco | 36 / 28 / 36 | 39 / 32 / 29 | 59 / 26 / 17 | **1–1** |
 | Netherlands – Japan | 36 / 30 / 34 | 53 / 29 / 18 | 48 / 28 / 26 | **2–2** |
 | France – Senegal | 59 / 25 / 16 | — | 67 / 22 / 13 | *pending* |
+| England – Croatia | 46 / 30 / 24 | — | 59 / 25 / 17 | *pending* |
 
 So far the model reads matches as more even than the market, which leans on the
 favourite. On Brazil–Morocco that paid off.
@@ -118,61 +119,18 @@ Netherlands vs Japan showed the same split: the market backed the Netherlands, t
 model called it roughly even and rated Japan higher. It finished **2–2** (xG
 0.70–0.54) — two for two, the model's "even" read beat the market's favourite-lean.
 
+England vs Croatia is the same shape again — the market backs England (59%), the
+model has it near-even (46%) and rates Croatia higher (result pending).
+
+<p align="center">
+  <img src="assets/prediction_england_croatia.png" width="80%">
+</p>
+
 ---
 
-## 🥊 MMA predictor (UFC, June 15)
-
-Same playbook applied to the UFC card — fighter Elo + skill ratings instead of
-team form. Code lives in [`mma/`](mma/), benchmarked against Polymarket and
-**[leo.taps](https://www.instagram.com/leo.taps/)** (an MMA analyst with a similar model).
-
-The honest headline: **in MMA the market is hard to beat.** Our backtest lands
-~65% vs the market's ~70% — the opposite of football. One punch ends a fight, and
-the betting market prices in style and intangibles that raw stats miss.
-
-<p align="center">
-  <img src="mma/assets/mma_predictions.png" width="80%">
-</p>
-
-| Fight | Our model | leo.taps | Polymarket | Result |
-|---|---|---|---|---|
-| Topuria – Gaethje | Topuria 78% | Topuria 91% | Topuria 80% | **Gaethje** TKO R4 ✗ all |
-| Pereira – Gane | **Gane 56%** | Pereira 62% | ~coin flip | **Gane** TKO R2 — **only our model** ✓ |
-| Ruffy – Chandler | Ruffy 67% | Ruffy 90% | Ruffy 81% | **Ruffy** TKO R1 ✓ |
-| O'Malley – Zahabi | O'Malley 61% | — | O'Malley 80% | **O'Malley** TKO R2 ✓ |
-
-**Scoreboard: our model 3/4, Polymarket 2/4, leo.taps 1/3.** The model beat the
-market on the night — driven by the one contrarian call: it was the *only* one of
-the three to pick **Gane** over Pereira, and Gane won by 2nd-round TKO. Topuria's
-loss was a genuine upset that everyone missed (market 80%, leo.taps 91%) — in MMA
-an 80% favourite still loses 1 in 5 times. (One card is a tiny sample; the backtest
-still says the market is sharper long-run.)
-
-**Specific-outcome call (for fun):** combining winner + method, the model's top
-pick for the main event is **Topuria by KO, rounds 1–2** (~33%) — both fighters
-finish ~70% of their wins, so a knockout beats a decision. Low confidence by
-design (10+ possible outcomes); see `mma/finger_in_air.py`.
-
-Same pattern as football: the model is **less confident in favourites** than the
-market. Calibration and robustness checks carry over:
-
-<p align="center">
-  <img src="mma/assets/mma_reliability.png" width="42%">
-  <img src="mma/assets/mma_sensitivity_topuria.png" width="55%">
-</p>
-
-The predictions are stable across Elo settings and training windows (Topuria
-78–79%, Gane 55–57%).
-
-**What this build mostly taught: debugging and skepticism.**
-- An early run predicted the underdog at 64% — a bug, not an edge: mixed
-  difference-sign conventions plus a "Red corner wins 58%" bias leaking in. Fixed
-  by computing all features one way and averaging over both corners.
-- Tried to turn an analyst's "Gane is southpaw, open stance" read into a feature —
-  but the data (and UFC.com) say **both fighters are orthodox**. The expert's
-  premise was wrong, which flips the argument. Verify the input before modelling it.
-- Finish method (KO/Sub/Decision) and round are predictable in principle but barely
-  beat guessing — the finer the question, the more it's just randomness.
+A second model applies the same approach to **UFC** (fighter Elo + skill ratings),
+benchmarked against Polymarket and the analyst leo.taps. On the June 15 card it went
+**3/4** and beat the market. Full write-up: [`mma/RESULTS.md`](mma/RESULTS.md).
 
 ## Files
 

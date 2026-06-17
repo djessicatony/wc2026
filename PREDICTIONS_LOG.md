@@ -42,6 +42,20 @@ Not a contrarian call this time — the data agrees France is the favourite, jus
 bit less confident than the market (59% vs 67%). No Senegal upset shout from the
 model; the Elo gap and form favour France clearly.
 
+## England vs Croatia — World Cup 2026, June 18
+
+Elo: England 1944, Croatia 1886 (58-point gap — close).
+
+| | our logreg | market | result |
+|---|---|---|---|
+| England win | 46.3% | 59% | (tbd) |
+| Draw | 30.0% | 25% | (tbd) |
+| Croatia win | 23.7% | 17% | (tbd) |
+
+Contrarian again: the market backs England (59%), the model has it near-even —
+England below 50%, with the draw + Croatia outweighing. Third football match where
+the model reads it more even than the market and rates the underdog higher.
+
 Here the two data models **split**: ours reads an even match, while sujar.tech
 (53% Netherlands) sides with the market. We are the contrarian — most bullish
 on Japan (34% vs market 26% vs sujar.tech 18%). To be checked after the match.
