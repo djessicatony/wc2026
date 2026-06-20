@@ -138,6 +138,29 @@ and the betting ROI is dominated by variance — it swung from −13% to +45% ju
 adding 12 matches. A "bet the draw" angle looks positive but needs 100+ matches to
 trust. Honest write-up: [`BETTING.md`](BETTING.md).
 
+## Goal markets — Elo + Poisson hybrid
+
+The W/D/L classifier can't price goal-based markets (over/under, both-teams-to-score,
+exact score). A **Poisson** model can — it models each side's *expected goals* (λ)
+and derives the full scoreline distribution. But a naive Poisson built on raw goals
+**breaks across confederations**: Germany's goals (vs strong UEFA sides) and Côte
+d'Ivoire's (vs weaker African qualifiers) aren't comparable, and with no shared
+opponents the model collapsed the match to a coin flip (37/26/37 — nonsense).
+
+The fix is a **hybrid**: **Elo sets the expected goals** (it propagates strength
+across the whole match graph, so cross-confederation works), and **Poisson turns
+those λ into a distribution**:
+
+```
+Germany vs Côte d'Ivoire (Δelo 161)  →  λ: Germany 2.36, Côte d'Ivoire 0.76
+  W/D/L:      73 / 17 / 10      (naive Poisson said 37/26/37; market 67/20/14)
+  over 2.5:   60%   ·   both score: 48%   ·   likely score: 2–0
+```
+
+So Elo answers "who", Poisson answers "how many". Code: `predict_hybrid.py`.
+*(Caveat: the λ fit bakes in home advantage, so a neutral match slightly over-favours
+the "home" side — the 73% is a few points high.)*
+
 ## Files
 
 | file | role |
