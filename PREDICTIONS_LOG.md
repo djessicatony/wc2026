@@ -34,13 +34,13 @@ Elo: France 1988, Senegal 1815 (173-point gap). France's form clearly better.
 
 | | our logreg | market | result |
 |---|---|---|---|
-| France win | 58.8% | 67% | (tbd) |
-| Draw | 24.8% | 22% | (tbd) |
-| Senegal win | 16.4% | 13% | (tbd) |
+| France win | 58.8% | 67% | **✓ 3–1 France** |
+| Draw | 24.8% | 22% | — |
+| Senegal win | 16.4% | 13% | — |
 
-Not a contrarian call this time — the data agrees France is the favourite, just a
-bit less confident than the market (59% vs 67%). No Senegal upset shout from the
-model; the Elo gap and form favour France clearly.
+Result: France won 3–1. Not a contrarian call — both the model and the market had
+France as favourite, and France delivered. Both right; the model was just a touch
+less confident (59% vs 67%).
 
 ## England vs Croatia — World Cup 2026, June 18
 
