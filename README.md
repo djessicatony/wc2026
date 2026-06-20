@@ -129,6 +129,15 @@ A second model applies the same approach to **UFC** (fighter Elo + skill ratings
 benchmarked against Polymarket and the analyst leo.taps. On the June 15 card it went
 **3/4** and beat the market. Full write-up: [`mma/RESULTS.md`](mma/RESULTS.md).
 
+## Does it make money?
+
+The real test of an edge is a bankroll, not accuracy. I pulled the closing
+Polymarket odds for all 32 played World Cup matches and ran Kelly-sized paper
+bets. Short version: the market picks winners better than the model (59% vs 56%),
+and the betting ROI is dominated by variance — it swung from −13% to +45% just by
+adding 12 matches. A "bet the draw" angle looks positive but needs 100+ matches to
+trust. Honest write-up: [`BETTING.md`](BETTING.md).
+
 ## Files
 
 | file | role |
