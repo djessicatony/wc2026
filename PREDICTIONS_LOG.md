@@ -48,13 +48,14 @@ Elo: England 1944, Croatia 1886 (58-point gap — close).
 
 | | our logreg | market | result |
 |---|---|---|---|
-| England win | 46.3% | 59% | (tbd) |
-| Draw | 30.0% | 25% | (tbd) |
-| Croatia win | 23.7% | 17% | (tbd) |
+| England win | 46.3% | 59% | **✓ 4–2 England** |
+| Draw | 30.0% | 25% | — |
+| Croatia win | 23.7% | 17% | — |
 
-Contrarian again: the market backs England (59%), the model has it near-even —
-England below 50%, with the draw + Croatia outweighing. Third football match where
-the model reads it more even than the market and rates the underdog higher.
+Result: England won 4–2. The contrarian "near-even" read **missed** — England were
+clear, and the market (59%) was right. The "more even than the market" pattern is
+now 2 of 3 (Brazil ✓, Netherlands ✓, England ✗). Honest reminder: it's a tendency,
+not a law, and a small sample.
 
 Here the two data models **split**: ours reads an even match, while sujar.tech
 (53% Netherlands) sides with the market. We are the contrarian — most bullish

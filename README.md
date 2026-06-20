@@ -106,7 +106,7 @@ Tracked against the **Polymarket** market and **[sujar.tech](https://www.instagr
 | Brazil – Morocco | 36 / 28 / 36 | 39 / 32 / 29 | 59 / 26 / 17 | **1–1** |
 | Netherlands – Japan | 36 / 30 / 34 | 53 / 29 / 18 | 48 / 28 / 26 | **2–2** |
 | France – Senegal | 59 / 25 / 16 | — | 67 / 22 / 13 | *pending* |
-| England – Croatia | 46 / 30 / 24 | — | 59 / 25 / 17 | *pending* |
+| England – Croatia | 46 / 30 / 24 | — | 59 / 25 / 17 | **4–2 England** ✗ |
 
 So far the model reads matches as more even than the market, which leans on the
 favourite. On Brazil–Morocco that paid off.
@@ -119,12 +119,9 @@ Netherlands vs Japan showed the same split: the market backed the Netherlands, t
 model called it roughly even and rated Japan higher. It finished **2–2** (xG
 0.70–0.54) — two for two, the model's "even" read beat the market's favourite-lean.
 
-England vs Croatia is the same shape again — the market backs England (59%), the
-model has it near-even (46%) and rates Croatia higher (result pending).
-
-<p align="center">
-  <img src="assets/prediction_england_croatia.png" width="80%">
-</p>
+England vs Croatia broke the streak: the model called it near-even (England 46%)
+but England won **4–2**. The market (59%) had it right — a clear reminder that the
+"more even than the market" read isn't always correct (now 2 of 3).
 
 ---
 

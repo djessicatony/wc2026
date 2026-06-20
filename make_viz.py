@@ -52,21 +52,6 @@ grouped(
     "Netherlands vs Japan — our model called it even; it finished 2–2",
     "prediction_netherlands_japan", ymax=60, actual="ACTUAL: 2–2 draw", actual_idx=1)
 
-# 1c. England vs Croatia (our model vs market)
-xe = np.arange(3); w2 = 0.38
-fig, ax = plt.subplots(figsize=(8.5, 4.6))
-ax.bar(xe - w2 / 2, [46, 30, 24], w2, label="Our model (logreg + Elo)", color=TEAL)
-ax.bar(xe + w2 / 2, [59, 25, 17], w2, label="Polymarket", color=ORANGE)
-ax.set_xticks(xe); ax.set_xticklabels(["England", "Draw", "Croatia"])
-ax.set_ylabel("Probability (%)"); ax.set_ylim(0, 70)
-ax.set_title("England vs Croatia — model sees it near-even; the market backs England",
-             fontsize=12, fontweight="bold")
-ax.legend(fontsize=9)
-for i, (o, mk) in enumerate(zip([46, 30, 24], [59, 25, 17])):
-    ax.text(i - w2 / 2, o + 1, f"{o}%", ha="center", fontsize=9)
-    ax.text(i + w2 / 2, mk + 1, f"{mk}%", ha="center", fontsize=9)
-sns.despine(); fig.savefig("assets/prediction_england_croatia.png"); plt.close(fig)
-
 # 2. Accuracy by version
 versions = ["v1\nform", "v2\nXGBoost\n(rich, few)", "v3\n+ Elo", "v6\nXGBoost\n(+Elo)", "v7\n+ importance"]
 acc = [65.0, 57.3, 71.2, 70.7, 71.1]
