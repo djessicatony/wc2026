@@ -149,17 +149,20 @@ opponents the model collapsed the match to a coin flip (37/26/37 — nonsense).
 
 The fix is a **hybrid**: **Elo sets the expected goals** (it propagates strength
 across the whole match graph, so cross-confederation works), and **Poisson turns
-those λ into a distribution**:
+those λ into a distribution**. Two calibration guards: the W/D/L is anchored to the
+Elo expected score *by construction* (so it can't over-favour the favourite, and it
+matches the direct-Elo model), and a **Dixon-Coles τ** correction fixes Poisson's
+habit of under-counting draws.
 
 ```
-Germany vs Côte d'Ivoire (Δelo 161)  →  λ: Germany 2.36, Côte d'Ivoire 0.76
-  W/D/L:      73 / 17 / 10      (naive Poisson said 37/26/37; market 67/20/14)
-  over 2.5:   60%   ·   both score: 48%   ·   likely score: 2–0
+Germany vs Côte d'Ivoire (Δelo 161)  →  λ: Germany 1.85, Côte d'Ivoire 0.87
+  W/D/L:      59 / 25 / 16      (naive Poisson said 37/26/37; market 67/20/14)
+  over 2.5:   51%   ·   both score: 51%   ·   likely score: 1–1
 ```
 
-So Elo answers "who", Poisson answers "how many". Code: `predict_hybrid.py`.
-*(Caveat: the λ fit bakes in home advantage, so a neutral match slightly over-favours
-the "home" side — the 73% is a few points high.)*
+So Elo answers "who", Poisson answers "how many". The W/D/L lands between the
+direct-Elo model (61/23/16) and the market, and the draw sits at a sensible 25%.
+Code: `predict_hybrid.py`.
 
 ## Files
 
