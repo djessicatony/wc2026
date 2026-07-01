@@ -62,3 +62,31 @@ Here the two data models **split**: ours reads an even match, while sujar.tech
 on Japan (34% vs market 26% vs sujar.tech 18%). To be checked after the match.
 
 > Reproduce: `python predict_match.py "Netherlands" "Japan"`
+
+---
+
+## Group-stage backtest — all 48 played matches (June 11–23)
+
+Once the whole group stage was played, I stopped cherry-picking 4 matches and
+graded the model **out-of-sample on every played match** (`wc_accuracy.py`,
+trained only on pre-June-11 games, leakage-safe Elo + form).
+
+| metric | value | note |
+|---|---|---|
+| winner accuracy | **62.5%** (30/48) | exactly ties the "pick higher Elo" baseline |
+| log loss | **0.893** | beats a 3-way coin flip (1.099) — probs are informative |
+| actual draw rate | **29.2%** (14/48) | a draw-heavy group stage |
+| model mean P(draw) | 22.6% | model under-expected draws by ~7 pts |
+| times model picked draw | **0 / 48** | the draw is never the single most likely outcome |
+
+**The headline is the draw problem.** 12 of the model's 18 misses were draws it
+called as home wins. On the 14 matches that actually drew, the model's average
+P(draw) was 21.3% — *lower* than the 23.2% it gave the non-draws. So it had no
+signal at all for *which* matches would draw; softmax logreg almost never makes
+"draw" the argmax because a draw is rarely the most likely single result even
+when it's underpriced. Winner accuracy tying the trivial Elo baseline says the
+form features add nothing here — Elo alone carries the model. The probabilities
+are still useful (log loss < coin flip), which is why the betting edge lives in
+draw *prices*, not in picking winners (see `BETTING.md`).
+
+> Reproduce: `python wc_accuracy.py`

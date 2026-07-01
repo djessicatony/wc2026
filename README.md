@@ -123,6 +123,38 @@ England vs Croatia broke the streak: the model called it near-even (England 46%)
 but England won **4–2**. The market (59%) had it right — a clear reminder that the
 "more even than the market" read isn't always correct (now 2 of 3).
 
+## Group-stage backtest — every played match
+
+Cherry-picking 4 matches proves nothing. Once the whole group stage was played I
+graded the model **out-of-sample on all 48 matches** (`wc_accuracy.py`, trained
+only on pre-tournament games):
+
+| metric | value | note |
+|---|---|---|
+| winner accuracy | **62.5%** (30/48) | exactly ties a "pick the higher-Elo side" baseline |
+| log loss | **0.893** | beats a 3-way coin flip (1.099) — the probabilities are informative |
+| actual draw rate | **29.2%** (14/48) | a draw-heavy group stage |
+| model mean P(draw) | 22.6% | the model under-expected draws by ~7 points |
+| times it picked a draw | **0 / 48** | a draw is never the single most likely outcome |
+
+The honest finding is the **draw problem**: 12 of the 18 misses were draws the
+model called as home wins, and on the matches that actually drew it assigned
+*less* draw probability (21.3%) than on the non-draws (23.2%) — it had no signal
+for which games would stalemate. Winner accuracy tying the trivial Elo baseline
+also says the form features add nothing here; Elo alone carries the model. The
+probabilities still beat a coin flip, which is why any betting edge lives in the
+draw *price*, not in picking winners.
+
+<p align="center">
+  <img src="assets/wc_draw_analysis.png" width="78%">
+</p>
+
+**Could lineups close the remaining gap to the market?** When a qualified team
+rests its stars in a dead rubber, Elo can't see it but the market can. On
+Norway–France, feeding that in moves our 55% → 66%, landing right on the market's
+62% — the gap *is* the lineup. But the signal is conditional, rare, and already
+priced, so it isn't worth building. Full test: [`LINEUP_SIGNAL.md`](LINEUP_SIGNAL.md).
+
 ---
 
 A second model applies the same approach to **UFC** (fighter Elo + skill ratings),
@@ -132,11 +164,12 @@ benchmarked against Polymarket and the analyst leo.taps. On the June 15 card it 
 ## Does it make money?
 
 The real test of an edge is a bankroll, not accuracy. I pulled the closing
-Polymarket odds for all 32 played World Cup matches and ran Kelly-sized paper
-bets. Short version: the market picks winners better than the model (59% vs 56%),
-and the betting ROI is dominated by variance — it swung from −13% to +45% just by
-adding 12 matches. A "bet the draw" angle looks positive but needs 100+ matches to
-trust. Honest write-up: [`BETTING.md`](BETTING.md).
+Polymarket odds for all 48 group-stage matches and ran Kelly-sized paper bets.
+Short version: the market picks winners better than the model (64.6% vs 62.5%),
+and the betting ROI is dominated by variance — naive Kelly read −0.3% at 32
+matches and −10.6% at 48, moving the wrong way as the sample grew. A "bet the
+draw" angle is positive (+77%) but rode a draw-heavy group stage (29% draws) and
+needs 100+ matches to trust. Honest write-up: [`BETTING.md`](BETTING.md).
 
 ## Goal markets — Elo + Poisson hybrid
 
