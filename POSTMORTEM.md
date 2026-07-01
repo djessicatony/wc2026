@@ -54,3 +54,7 @@ matches) to reach essentially the same answer our simpler Elo model gave.
 - The model's probabilities are **calibrated** (see v8), so "even match" was an honest read.
 - Next feature frontier to close the gap to the market: **squad/player quality**
   (the Vinícius factor) — asymmetric, would carry real signal.
+  → **Investigated in [`LINEUP_SIGNAL.md`](LINEUP_SIGNAL.md):** the lineup does
+  explain the model↔market gap on competitive matches (Norway–France: our 55% +
+  lineup = 66%, right on the market's 62%), but the signal is conditional, rare,
+  and already priced — verdict: not worth the pipeline.
